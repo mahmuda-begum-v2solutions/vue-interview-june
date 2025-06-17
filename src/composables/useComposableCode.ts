@@ -44,9 +44,13 @@ export function useComposableCodes() {
     lat: number | undefined,
     lon: number | undefined,
     fromToggle?: number,
+    unitshere?: 'metric' | 'imperial',
   ) => {
-    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`
-    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${units.value}&cnt=7`
+    const unitVal = unitshere ? unitshere : units.value
+    const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${unitVal}`
+    const forecastUrl = `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=${unitVal}&cnt=7`
+
+    console.log(weatherUrl)
 
     const [weatherData, forecastData] = await Promise.allSettled([
       apiCallFn<WeatherType>(weatherUrl),
@@ -54,7 +58,8 @@ export function useComposableCodes() {
     ])
 
     if (weatherData.status === 'fulfilled') {
-      if (fromToggle) {
+      if (typeof fromToggle === 'number') {
+        console.log('xxxxxx')
         lastFiveWeather.value[fromToggle].weatherDetail = weatherData.value
       } else {
         apiweatherInfo.value.weatherDetail = weatherData.value
@@ -62,7 +67,7 @@ export function useComposableCodes() {
     }
 
     if (forecastData.status === 'fulfilled') {
-      if (fromToggle) {
+      if (typeof fromToggle === 'number') {
         lastFiveWeather.value[fromToggle].forecast = forecastData.value
       } else {
         apiweatherInfo.value.forecast = forecastData.value
@@ -74,8 +79,12 @@ export function useComposableCodes() {
     indexNumber: number
     lat: number | undefined
     lon: number | undefined
+    units: 'metric' | 'imperial'
   }) => {
-    await callWeatherApi(payload.lat, payload.lon, payload.indexNumber)
+    console.log(payload)
+    const newunits = payload.units === 'imperial' ? 'metric' : 'imperial'
+    await callWeatherApi(payload.lat, payload.lon, payload.indexNumber, newunits)
+    lastFiveWeather.value[payload.indexNumber].units = newunits
   }
 
   const consoleErr = (mess: string) => {

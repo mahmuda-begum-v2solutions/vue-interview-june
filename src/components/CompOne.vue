@@ -6,7 +6,7 @@ defineProps<{
 }>()
 
 defineEmits<{
-  (e: 'toggle', val: { indexNumber: number; lat: number | undefined; lon: number | undefined }): void
+  (e: 'toggle', val: { indexNumber: number; lat: number | undefined; lon: number | undefined, units: 'metric' | 'imperial' }): void
 }>()
 </script>
 <template>
@@ -17,7 +17,7 @@ defineEmits<{
         <p>{{ weatherAllDetail.name }}</p>
         <div>
           <button class="p-2 bg-blue-500 text-white rounded-md"
-            @click="$emit('toggle', { indexNumber: index, lat: weatherAllDetail.latlon?.lat, lon: weatherAllDetail.latlon?.lon })">Toggle
+            @click="$emit('toggle', { indexNumber: index, lat: weatherAllDetail.latlon?.lat, lon: weatherAllDetail.latlon?.lon, units: weatherAllDetail.units })">Toggle
             {{ weatherAllDetail.units }}</button>
         </div>
       </div>
