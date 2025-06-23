@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import CompOne from '@/components/CompOne.vue';
-import { useComposableCodes } from '@/composables/useComposableCode';
-const { loading, err, searchInput, callApisFromSearch, lastFiveWeather, toggleFn } = useComposableCodes()
+import DisplayCharts from '@/components/DisplayCharts.vue';
+import DisplayWeatherInfo from '@/components/DisplayWeatherInfo.vue';
+import { useWeatherInfos } from '@/composables/useWeatherInfos';
+const { loading, err, searchInput, callApisFromSearch, lastFiveWeather, toggleFn } = useWeatherInfos()
 </script>
 
 <template>
@@ -20,7 +21,17 @@ const { loading, err, searchInput, callApisFromSearch, lastFiveWeather, toggleFn
       <div v-if="err.length" class="text-red-500">{{ err }}</div>
       <!--  -->
       <div v-if="lastFiveWeather.length">
-        <CompOne :last-five-weather="lastFiveWeather" @toggle="toggleFn" />
+
+        <div class="grid grid-cols-3 gap-1">
+          <div class="flex flex-col gap-y-3 border border-blue-500 rounded-md p-3"
+            v-for="(weatherAllDetail, index) in lastFiveWeather" :key="weatherAllDetail.id">
+            <DisplayWeatherInfo :last-five-weather="weatherAllDetail" @toggle="toggleFn" :index="index" />
+            <template v-if="weatherAllDetail.forecast">
+              <DisplayCharts :forecast-details="weatherAllDetail.forecast" />
+            </template>
+          </div>
+
+        </div>
       </div>
 
     </div>
